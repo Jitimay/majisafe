@@ -1,0 +1,11 @@
+# Repository root: enables Dart/Flutter analysis when this folder is the IDE workspace.
+# Run `flutter pub get` here (or in majisafe_app) after cloning.
+name: majisafe
+publish_to: 'none'
+version: 0.0.0
+
+environment:
+  sdk: ^3.9.2
+
+workspace:
+  - majisafe_app
