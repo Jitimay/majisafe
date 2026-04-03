@@ -8,8 +8,22 @@ import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/widgets/user_profile_avatar.dart';
 
 /// Profile and sign out.
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AuthBloc>().add(const AuthSilentRefresh());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +48,11 @@ class ProfileScreen extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: UserProfileAvatar(user: u, radius: 52, fallbackIconSize: 52),
+              child: UserProfileAvatar(
+                user: u,
+                radius: 52,
+                probeServerEvenIfNoFlag: true,
+              ),
             ),
           ),
           const SizedBox(height: 20),

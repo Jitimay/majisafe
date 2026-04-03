@@ -14,12 +14,14 @@ class UserProfileAvatar extends StatefulWidget {
     super.key,
     required this.user,
     this.radius = 28,
-    this.fallbackIconSize,
+    /// When true, always requests the avatar endpoint (e.g. Profile tab) so the
+    /// image still shows if `has_avatar` on [user] was stale or missing.
+    this.probeServerEvenIfNoFlag = false,
   });
 
   final User user;
   final double radius;
-  final double? fallbackIconSize;
+  final bool probeServerEvenIfNoFlag;
 
   @override
   State<UserProfileAvatar> createState() => _UserProfileAvatarState();
@@ -28,42 +30,70 @@ class UserProfileAvatar extends StatefulWidget {
 class _UserProfileAvatarState extends State<UserProfileAvatar> {
   Uint8List? _bytes;
   bool _loading = false;
-  bool _failed = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.probeServerEvenIfNoFlag || widget.user.hasAvatar) {
+      _loading = true;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
   @override
   void didUpdateWidget(UserProfileAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.user.id != widget.user.id || oldWidget.user.hasAvatar != widget.user.hasAvatar) {
+    if (oldWidget.user.id != widget.user.id ||
+        oldWidget.user.hasAvatar != widget.user.hasAvatar ||
+        oldWidget.probeServerEvenIfNoFlag != widget.probeServerEvenIfNoFlag) {
       _bytes = null;
-      _failed = false;
-      _load();
+      _loading = widget.probeServerEvenIfNoFlag || widget.user.hasAvatar;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _load());
     }
   }
 
+  Uint8List? _bytesFromResponse(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is Uint8List) return raw;
+    if (raw is List<int>) return Uint8List.fromList(raw);
+    return null;
+  }
+
   Future<void> _load() async {
-    if (!widget.user.hasAvatar) return;
+    final shouldFetch = widget.probeServerEvenIfNoFlag || widget.user.hasAvatar;
+    if (!shouldFetch) {
+      if (mounted) setState(() => _loading = false);
+      return;
+    }
     if (!mounted) return;
     setState(() {
       _loading = true;
-      _failed = false;
     });
     try {
       final dio = context.read<ApiService>().client;
       final res = await dio.get<dynamic>(
         ApiConfig.authAvatar,
-        options: Options(responseType: ResponseType.bytes),
+        options: Options(
+          responseType: ResponseType.bytes,
+          validateStatus: widget.probeServerEvenIfNoFlag
+              ? (s) => s != null && (s == 200 || s == 404)
+              : null,
+        ),
       );
-      final raw = res.data;
-      if (raw is List<int>) {
+      if (widget.probeServerEvenIfNoFlag && res.statusCode == 404) {
         if (mounted) {
           setState(() {
-            _bytes = Uint8List.fromList(raw);
+            _bytes = null;
+            _loading = false;
+          });
+        }
+        return;
+      }
+      final parsed = _bytesFromResponse(res.data);
+      if (parsed != null && parsed.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+            _bytes = parsed;
             _loading = false;
           });
         }
@@ -74,10 +104,24 @@ class _UserProfileAvatarState extends State<UserProfileAvatar> {
       if (mounted) {
         setState(() {
           _loading = false;
-          _failed = true;
         });
       }
     }
+  }
+
+  Widget _initialsAvatar(double r) {
+    return CircleAvatar(
+      radius: r,
+      backgroundColor: AppTheme.primary.withValues(alpha: 0.15),
+      child: Text(
+        _initials(),
+        style: TextStyle(
+          fontSize: r * 0.85,
+          fontWeight: FontWeight.w800,
+          color: AppTheme.secondary,
+        ),
+      ),
+    );
   }
 
   String _initials() {
@@ -98,24 +142,21 @@ class _UserProfileAvatarState extends State<UserProfileAvatar> {
   @override
   Widget build(BuildContext context) {
     final r = widget.radius;
-    final iconSize = widget.fallbackIconSize ?? (r * 1.1);
 
-    if (!widget.user.hasAvatar || _failed) {
-      return CircleAvatar(
-        radius: r,
-        backgroundColor: AppTheme.primary.withValues(alpha: 0.15),
-        child: Text(
-          _initials(),
-          style: TextStyle(
-            fontSize: r * 0.85,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.secondary,
-          ),
+    if (_bytes != null && _bytes!.isNotEmpty) {
+      return ClipOval(
+        child: Image.memory(
+          _bytes!,
+          width: r * 2,
+          height: r * 2,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          errorBuilder: (_, __, ___) => _initialsAvatar(r),
         ),
       );
     }
 
-    if (_loading && _bytes == null) {
+    if (_loading) {
       return CircleAvatar(
         radius: r,
         backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
@@ -127,17 +168,11 @@ class _UserProfileAvatarState extends State<UserProfileAvatar> {
       );
     }
 
-    if (_bytes != null && _bytes!.isNotEmpty) {
-      return CircleAvatar(
-        radius: r,
-        backgroundImage: MemoryImage(_bytes!),
-      );
+    if (!widget.probeServerEvenIfNoFlag && !widget.user.hasAvatar) {
+      return _initialsAvatar(r);
     }
 
-    return CircleAvatar(
-      radius: r,
-      backgroundColor: AppTheme.secondary.withValues(alpha: 0.12),
-      child: Icon(Icons.person_rounded, size: iconSize, color: AppTheme.secondary),
-    );
+    // Probed or had flag but no bytes (404, parse error, or network failure).
+    return _initialsAvatar(r);
   }
 }
