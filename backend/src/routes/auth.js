@@ -23,6 +23,8 @@ router.post(
     body('phone').trim().isLength({ min: 8, max: 20 }).withMessage('Invalid phone'),
     body('name').optional().trim().isLength({ max: 120 }),
     body('password').isLength({ min: 6, max: 128 }).withMessage('Password too short'),
+    body('avatar_base64').optional().isString().isLength({ max: 700000 }).withMessage('Avatar too large'),
+    body('avatar_mime').optional().trim().isLength({ max: 40 }),
   ],
   validate,
   auth.register
@@ -46,5 +48,7 @@ router.post(
 );
 
 router.get('/me', authMiddleware, auth.me);
+
+router.get('/avatar', authMiddleware, auth.serveAvatar);
 
 export default router;

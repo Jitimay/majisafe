@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_bloc.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_event.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_state.dart';
+import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/widgets/coin_balance_card.dart';
 import 'package:majisafe_app/widgets/transaction_tile.dart';
 
@@ -32,41 +33,74 @@ class _WalletScreenState extends State<WalletScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is WalletFailure) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(state.message, textAlign: TextAlign.center),
+              ),
+            );
           }
           if (state is! WalletLoaded) {
-            return const SizedBox.shrink();
+            return const Center(child: CircularProgressIndicator());
           }
           return RefreshIndicator(
             onRefresh: () async {
               context.read<WalletBloc>().add(const WalletLoadRequested());
             },
             child: ListView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
               children: [
                 if (state.offlineBanner != null)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(state.offlineBanner!, style: TextStyle(color: Colors.orange.shade800)),
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: Material(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline_rounded, color: Colors.orange.shade900, size: 22),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                state.offlineBanner!,
+                                style: TextStyle(color: Colors.orange.shade900, fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 CoinBalanceCard(coins: state.coins),
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
                 FilledButton.icon(
                   onPressed: () => context.push('/wallet/topup'),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Top Up'),
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Add Regideso Coins'),
                 ),
-                const SizedBox(height: 24),
-                Text('Recent', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
+                const SizedBox(height: 28),
+                Text(
+                  'Recent activity',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 12),
                 if (state.transactions.isEmpty)
-                  const Text('No transactions yet.')
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      'No transactions yet.',
+                      style: TextStyle(color: AppTheme.textMuted),
+                    ),
+                  )
                 else
-                  Card(
-                    child: Column(
-                      children: state.transactions
-                          .map((t) => TransactionTile(tx: t))
-                          .toList(),
+                  ...state.transactions.map(
+                    (t) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Card(
+                        child: TransactionTile(tx: t),
+                      ),
                     ),
                   ),
               ],

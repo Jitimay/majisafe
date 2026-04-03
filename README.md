@@ -126,4 +126,3 @@ Always verify against your **exact** LilyGO T-Call revision.
 ---
 
 **Security:** Change default station secrets, admin password, and JWT secrets before any production use. Prefer HTTPS termination in front of the API and a non-empty `SMS_WEBHOOK_SECRET` on public webhooks.
-# majisafe

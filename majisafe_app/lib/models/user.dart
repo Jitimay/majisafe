@@ -10,6 +10,7 @@ class User extends Equatable {
     required this.role,
     required this.coinBalance,
     this.createdAt,
+    this.hasAvatar = false,
   });
 
   /// Parses `/api/auth/me` or login payload `user` object.
@@ -21,6 +22,7 @@ class User extends Equatable {
       role: json['role']?.toString() ?? 'user',
       coinBalance: _toDouble(json['coin_balance']),
       createdAt: json['created_at']?.toString(),
+      hasAvatar: _toBool(json['has_avatar']),
     );
   }
 
@@ -31,12 +33,21 @@ class User extends Equatable {
     return int.tryParse(v.toString()) ?? 0;
   }
 
+  static bool _toBool(dynamic v) {
+    if (v == null) return false;
+    if (v is bool) return v;
+    if (v is num) return v != 0;
+    final s = v.toString().toLowerCase();
+    return s == 'true' || s == '1';
+  }
+
   final int id;
   final String phone;
   final String? name;
   final String role;
   final double coinBalance;
   final String? createdAt;
+  final bool hasAvatar;
 
   static double _toDouble(dynamic v) {
     if (v == null) return 0;
@@ -51,6 +62,7 @@ class User extends Equatable {
     String? role,
     double? coinBalance,
     String? createdAt,
+    bool? hasAvatar,
   }) {
     return User(
       id: id ?? this.id,
@@ -59,9 +71,10 @@ class User extends Equatable {
       role: role ?? this.role,
       coinBalance: coinBalance ?? this.coinBalance,
       createdAt: createdAt ?? this.createdAt,
+      hasAvatar: hasAvatar ?? this.hasAvatar,
     );
   }
 
   @override
-  List<Object?> get props => [id, phone, name, role, coinBalance, createdAt];
+  List<Object?> get props => [id, phone, name, role, coinBalance, createdAt, hasAvatar];
 }

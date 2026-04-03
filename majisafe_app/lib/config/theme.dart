@@ -7,45 +7,87 @@ class AppTheme {
 
   static const Color primary = Color(0xFF1D9E75);
   static const Color secondary = Color(0xFF0F6E56);
-  static const Color background = Color(0xFFF8FFFE);
+  static const Color background = Color(0xFFF3FAF7);
+  static const Color surfaceCard = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFE24B4A);
+  static const Color textMuted = Color(0xFF6B7A76);
 
   /// Builds the root Material 3 theme for the app.
   static ThemeData light() {
     final textTheme = GoogleFonts.interTextTheme();
+    final scheme = ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: secondary,
+      surface: surfaceCard,
+      surfaceContainerHighest: const Color(0xFFE8F5F0),
+      error: error,
+    );
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primary,
-        primary: primary,
-        secondary: secondary,
-        surface: background,
-        error: error,
-      ),
+      colorScheme: scheme,
       scaffoldBackgroundColor: background,
-      textTheme: textTheme,
+      textTheme: textTheme.apply(
+        bodyColor: const Color(0xFF1C2421),
+        displayColor: const Color(0xFF1C2421),
+      ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: primary,
-        foregroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        backgroundColor: surfaceCard,
+        foregroundColor: secondary,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: GoogleFonts.inter(
-          color: Colors.white,
+          color: secondary,
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
         ),
+        iconTheme: const IconThemeData(color: secondary),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        color: surfaceCard,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: scheme.outline.withValues(alpha: 0.08)),
+        ),
+        margin: EdgeInsets.zero,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: secondary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          side: BorderSide(color: primary.withValues(alpha: 0.45)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: scheme.outline.withValues(alpha: 0.25)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: primary, width: 2),
+        ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: surfaceCard,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       ),
+      dividerTheme: DividerThemeData(color: scheme.outline.withValues(alpha: 0.12)),
     );
   }
 }

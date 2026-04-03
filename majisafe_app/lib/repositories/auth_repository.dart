@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:majisafe_app/config/api_config.dart';
 import 'package:majisafe_app/models/user.dart';
@@ -40,24 +43,43 @@ class AuthRepository {
     return v.toString();
   }
 
+  /// Normalizes Dio JSON body to a single map (handles `Map<dynamic, dynamic>` from parsers).
+  static Map<String, dynamic> _responseMap(Response<dynamic> res) {
+    final raw = res.data;
+    if (raw == null) {
+      throw FormatException('Empty response (HTTP ${res.statusCode})');
+    }
+    if (raw is! Map) {
+      throw FormatException('Expected JSON object, got ${raw.runtimeType}');
+    }
+    return Map<String, dynamic>.from(raw);
+  }
+
   /// Registers a new wallet user and persists tokens.
   Future<User> register({
     required String phone,
     required String name,
     required String password,
+    Uint8List? avatarBytes,
+    String? avatarMime,
   }) async {
-    final res = await _dio.post<Map<String, dynamic>>(
+    final payload = <String, dynamic>{
+      'phone': normalizePhone(phone),
+      'name': name,
+      'password': password,
+    };
+    if (avatarBytes != null && avatarBytes.isNotEmpty) {
+      payload['avatar_base64'] = base64Encode(avatarBytes);
+      payload['avatar_mime'] = avatarMime ?? 'image/jpeg';
+    }
+    final res = await _dio.post<dynamic>(
       ApiConfig.authRegister,
-      data: {
-        'phone': normalizePhone(phone),
-        'name': name,
-        'password': password,
-      },
+      data: payload,
     );
-    final data = res.data!;
-    final user = User.fromJson(_asJsonMap(data['user']));
-    final access = _stringField(data['token']);
-    final refresh = _stringField(data['refresh_token']);
+    final body = _responseMap(res);
+    final user = User.fromJson(_asJsonMap(body['user']));
+    final access = _stringField(body['token']);
+    final refresh = _stringField(body['refresh_token']);
     if (access == null || access.isEmpty || refresh == null || refresh.isEmpty) {
       throw FormatException('Missing token in register response');
     }
@@ -67,14 +89,14 @@ class AuthRepository {
 
   /// Logs in and persists tokens.
   Future<User> login({required String phone, required String password}) async {
-    final res = await _dio.post<Map<String, dynamic>>(
+    final res = await _dio.post<dynamic>(
       ApiConfig.authLogin,
       data: {
         'phone': normalizePhone(phone),
         'password': password,
       },
     );
-    final data = res.data!;
+    final data = _responseMap(res);
     final user = User.fromJson(_asJsonMap(data['user']));
     final access = _stringField(data['token']);
     final refresh = _stringField(data['refresh_token']);
@@ -87,8 +109,8 @@ class AuthRepository {
 
   /// Fetches current profile (requires valid access token).
   Future<User> me() async {
-    final res = await _dio.get<Map<String, dynamic>>(ApiConfig.authMe);
-    final data = res.data!;
+    final res = await _dio.get<dynamic>(ApiConfig.authMe);
+    final data = _responseMap(res);
     return User.fromJson(_asJsonMap(data['user']));
   }
 

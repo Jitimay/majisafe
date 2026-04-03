@@ -128,6 +128,13 @@ function runMigrations(db) {
     if (!ti.some((c) => c.name === 'progress_litres')) {
       db.exec(`ALTER TABLE transactions ADD COLUMN progress_litres REAL`);
     }
+    const ui = db.prepare(`PRAGMA table_info(users)`).all();
+    if (!ui.some((c) => c.name === 'avatar_blob')) {
+      db.exec(`ALTER TABLE users ADD COLUMN avatar_blob BLOB`);
+    }
+    if (!ui.some((c) => c.name === 'avatar_mime')) {
+      db.exec(`ALTER TABLE users ADD COLUMN avatar_mime TEXT`);
+    }
   } catch (e) {
     log('error', 'migration failed', { err: String(e) });
     throw e;

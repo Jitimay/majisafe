@@ -16,57 +16,60 @@ class CoinBalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            colors: [AppTheme.primary, AppTheme.secondary],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.secondary.withValues(alpha: 0.22),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
+        ],
+        gradient: const LinearGradient(
+          colors: [AppTheme.primary, AppTheme.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            subtitle,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+          const SizedBox(height: 8),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: coins),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) {
+              final text = value == value.roundToDouble()
+                  ? value.toStringAsFixed(0)
+                  : value.toStringAsFixed(1);
+              return Text(
+                text,
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+              );
+            },
+          ),
+          if (footer != null) ...[
+            const SizedBox(height: 12),
             Text(
-              subtitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white70,
-                    fontWeight: FontWeight.w500,
-                  ),
+              footer!,
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
             ),
-            const SizedBox(height: 8),
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: coins),
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeOutCubic,
-              builder: (context, value, _) {
-                final text = value == value.roundToDouble()
-                    ? value.toStringAsFixed(0)
-                    : value.toStringAsFixed(1);
-                return Text(
-                  text,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                );
-              },
-            ),
-            if (footer != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                footer!,
-                style: const TextStyle(color: Colors.white70, fontSize: 13),
-              ),
-            ],
           ],
-        ),
+        ],
       ),
     );
   }

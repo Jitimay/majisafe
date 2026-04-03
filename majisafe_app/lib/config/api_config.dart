@@ -20,6 +20,7 @@ class ApiConfig {
   static const String authLogin = '/auth/login';
   static const String authRefresh = '/auth/refresh';
   static const String authMe = '/auth/me';
+  static const String authAvatar = '/auth/avatar';
   static const String walletBalance = '/wallet/balance';
   static const String walletTopup = '/wallet/topup';
   static const String walletHistory = '/wallet/history';

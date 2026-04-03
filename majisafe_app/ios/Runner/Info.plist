@@ -50,5 +50,9 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>MajiSafe needs photo library access to set your profile picture.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>MajiSafe needs camera access to take a profile picture.</string>
 </dict>
 </plist>

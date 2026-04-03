@@ -23,6 +23,9 @@ import 'package:majisafe_app/screens/wallet/topup_bank_screen.dart';
 import 'package:majisafe_app/screens/wallet/topup_screen.dart';
 import 'package:majisafe_app/screens/wallet/topup_sms_screen.dart';
 import 'package:majisafe_app/screens/wallet/wallet_screen.dart';
+import 'package:majisafe_app/widgets/app_shell_scaffold.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 /// Builds [GoRouter] with auth redirects and app routes.
 GoRouter createRouter({
@@ -30,6 +33,7 @@ GoRouter createRouter({
   required GoRouterRefreshStream refresh,
 }) {
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
     refreshListenable: refresh,
     redirect: (BuildContext context, GoRouterState state) {
@@ -56,10 +60,40 @@ GoRouter createRouter({
       GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
-      GoRoute(path: '/wallet', builder: (_, __) => const WalletScreen()),
-      GoRoute(path: '/wallet/topup', builder: (_, __) => const TopUpScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppShellScaffold(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/wallet', builder: (_, __) => const WalletScreen()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/history', builder: (_, __) => const HistoryScreen()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+            ],
+          ),
+        ],
+      ),
       GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/wallet/topup',
+        builder: (_, __) => const TopUpScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: '/wallet/topup/sms',
         builder: (c, s) {
           final extra = s.extra as Map<String, dynamic>?;
@@ -72,6 +106,7 @@ GoRouter createRouter({
         },
       ),
       GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: '/wallet/topup/bank',
         builder: (c, s) {
           final extra = s.extra as Map<String, dynamic>?;
@@ -82,8 +117,13 @@ GoRouter createRouter({
           );
         },
       ),
-      GoRoute(path: '/dispense/stations', builder: (_, __) => const StationListScreen()),
       GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/dispense/stations',
+        builder: (_, __) => const StationListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: '/dispense/detail',
         builder: (c, s) {
           final st = s.extra as Station?;
@@ -91,10 +131,18 @@ GoRouter createRouter({
           return StationDetailScreen(station: st);
         },
       ),
-      GoRoute(path: '/dispense/run', builder: (_, __) => const DispenseScreen()),
-      GoRoute(path: '/dispense/result', builder: (_, __) => const DispenseResultScreen()),
-      GoRoute(path: '/history', builder: (_, __) => const HistoryScreen()),
       GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/dispense/run',
+        builder: (_, __) => const DispenseScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/dispense/result',
+        builder: (_, __) => const DispenseResultScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: '/history/detail',
         builder: (c, s) {
           final tx = s.extra as WalletTransaction?;
@@ -102,7 +150,6 @@ GoRouter createRouter({
           return TransactionDetailScreen(tx: tx);
         },
       ),
-      GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
     ],
   );
 }

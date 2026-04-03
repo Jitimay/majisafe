@@ -21,7 +21,13 @@ export function authMiddleware(req, res, next) {
       return res.status(401).json(apiError('UNAUTHORIZED', 'Invalid token type'));
     }
     const db = getDb();
-    const user = db.prepare(`SELECT id, phone, name, role, coin_balance, created_at FROM users WHERE id = ?`).get(payload.sub);
+    const user = db
+      .prepare(
+        `SELECT id, phone, name, role, coin_balance, created_at,
+         CASE WHEN avatar_blob IS NOT NULL AND length(avatar_blob) > 0 THEN 1 ELSE 0 END AS has_avatar
+         FROM users WHERE id = ?`
+      )
+      .get(payload.sub);
     if (!user) {
       return res.status(401).json(apiError('UNAUTHORIZED', 'User no longer exists'));
     }

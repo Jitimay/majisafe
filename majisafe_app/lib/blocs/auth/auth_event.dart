@@ -30,14 +30,18 @@ class AuthRegisterSubmitted extends AuthEvent {
     required this.phone,
     required this.name,
     required this.password,
+    this.avatarBytes,
+    this.avatarMime,
   });
 
   final String phone;
   final String name;
   final String password;
+  final List<int>? avatarBytes;
+  final String? avatarMime;
 
   @override
-  List<Object?> get props => [phone, name, password];
+  List<Object?> get props => [phone, name, password, avatarBytes?.length, avatarMime];
 }
 
 /// Clears tokens and returns to login.

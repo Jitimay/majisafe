@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { getDb } from './models/db.js';
@@ -17,12 +18,14 @@ import smsRoutes from './routes/sms.js';
  */
 function createApp() {
   const app = express();
-  app.use(cors());
-  app.use(express.json({ limit: '256kb' }));
-
+  // No middleware: fastest possible response for LAN / device probes.
   app.get('/health', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
     res.json({ success: true, service: 'majisafe-backend' });
   });
+
+  app.use(cors());
+  app.use(express.json({ limit: '256kb' }));
 
   app.use('/api/auth', authRoutes);
   app.use('/api/wallet', walletRoutes);
@@ -36,11 +39,25 @@ function createApp() {
 }
 
 const app = createApp();
+
+if (!String(process.env.JWT_SECRET || '').trim()) {
+  log(
+    'error',
+    'JWT_SECRET is not set. In the backend folder: cp .env.example .env then edit .env and set JWT_SECRET (long random string).'
+  );
+  process.exit(1);
+}
+
 getDb();
 
 const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => {
-  log('info', 'MajiSafe API listening', { port });
+const host = process.env.HOST || '0.0.0.0';
+const server = http.createServer(app);
+server.on('connection', (socket) => {
+  socket.setNoDelay(true);
+});
+server.listen(port, host, () => {
+  log('info', 'MajiSafe API listening', { port, host });
 });
 
 export { createApp };

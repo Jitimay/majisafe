@@ -12,6 +12,8 @@ class ApiService {
     _dio.options.connectTimeout = const Duration(seconds: 45);
     _dio.options.sendTimeout = const Duration(seconds: 45);
     _dio.options.receiveTimeout = const Duration(seconds: 60);
+    // Register returns 201 Created — must count as success (some clients default to 200-only).
+    _dio.options.validateStatus = (status) => status != null && status >= 200 && status < 300;
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {

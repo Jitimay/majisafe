@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_event.dart';
@@ -59,6 +61,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         phone: event.phone,
         name: event.name,
         password: event.password,
+        avatarBytes: event.avatarBytes == null ? null : Uint8List.fromList(event.avatarBytes!),
+        avatarMime: event.avatarMime,
       );
       emit(AuthAuthenticated(user, justRegistered: true));
     } on DioException catch (e) {

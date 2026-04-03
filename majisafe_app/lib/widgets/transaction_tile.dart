@@ -16,9 +16,11 @@ class TransactionTile extends StatelessWidget {
     final title = _titleFor(tx);
     final subtitle = tx.createdAt != null ? _formatDate(tx.createdAt!) : '';
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: CircleAvatar(
+        radius: 22,
         backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
-        child: Icon(icon, color: AppTheme.primary),
+        child: Icon(icon, color: AppTheme.primary, size: 22),
       ),
       title: Text(title),
       subtitle: Text(subtitle),
