@@ -15,6 +15,31 @@ class AuthRepository {
   final Dio _dio;
   final AuthService _auth;
 
+  /// Same format for register and login so `+257…` matches `257…`.
+  static String normalizePhone(String phone) {
+    var s = phone.trim().replaceAll(RegExp(r'\s+'), '');
+    if (s.startsWith('+')) {
+      s = s.substring(1);
+    }
+    return s;
+  }
+
+  static Map<String, dynamic> _asJsonMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) {
+      return raw;
+    }
+    if (raw is Map) {
+      return Map<String, dynamic>.from(raw);
+    }
+    throw FormatException('Expected JSON object, got ${raw.runtimeType}');
+  }
+
+  static String? _stringField(dynamic v) {
+    if (v == null) return null;
+    if (v is String) return v;
+    return v.toString();
+  }
+
   /// Registers a new wallet user and persists tokens.
   Future<User> register({
     required String phone,
@@ -23,33 +48,48 @@ class AuthRepository {
   }) async {
     final res = await _dio.post<Map<String, dynamic>>(
       ApiConfig.authRegister,
-      data: {'phone': phone, 'name': name, 'password': password},
+      data: {
+        'phone': normalizePhone(phone),
+        'name': name,
+        'password': password,
+      },
     );
     final data = res.data!;
-    final access = data['token'] as String;
-    final refresh = data['refresh_token'] as String;
+    final user = User.fromJson(_asJsonMap(data['user']));
+    final access = _stringField(data['token']);
+    final refresh = _stringField(data['refresh_token']);
+    if (access == null || access.isEmpty || refresh == null || refresh.isEmpty) {
+      throw FormatException('Missing token in register response');
+    }
     await _auth.saveTokens(access: access, refresh: refresh);
-    return User.fromJson(data['user'] as Map<String, dynamic>);
+    return user;
   }
 
   /// Logs in and persists tokens.
   Future<User> login({required String phone, required String password}) async {
     final res = await _dio.post<Map<String, dynamic>>(
       ApiConfig.authLogin,
-      data: {'phone': phone, 'password': password},
+      data: {
+        'phone': normalizePhone(phone),
+        'password': password,
+      },
     );
     final data = res.data!;
-    final access = data['token'] as String;
-    final refresh = data['refresh_token'] as String;
+    final user = User.fromJson(_asJsonMap(data['user']));
+    final access = _stringField(data['token']);
+    final refresh = _stringField(data['refresh_token']);
+    if (access == null || access.isEmpty || refresh == null || refresh.isEmpty) {
+      throw FormatException('Missing token in login response');
+    }
     await _auth.saveTokens(access: access, refresh: refresh);
-    return User.fromJson(data['user'] as Map<String, dynamic>);
+    return user;
   }
 
   /// Fetches current profile (requires valid access token).
   Future<User> me() async {
     final res = await _dio.get<Map<String, dynamic>>(ApiConfig.authMe);
     final data = res.data!;
-    return User.fromJson(data['user'] as Map<String, dynamic>);
+    return User.fromJson(_asJsonMap(data['user']));
   }
 
   /// Clears secure storage tokens.

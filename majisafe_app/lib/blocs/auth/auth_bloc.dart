@@ -18,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterSubmitted>(_onRegister);
     on<AuthLogoutPressed>(_onLogout);
     on<AuthSilentRefresh>(_onSilentRefresh);
+    on<AuthJustRegisteredAcknowledged>(_onJustRegisteredAck);
   }
 
   final AuthRepository _repo;
@@ -59,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
         password: event.password,
       );
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(user, justRegistered: true));
     } on DioException catch (e) {
       emit(AuthUnauthenticated(message: _msg(e)));
     } catch (e) {
@@ -77,9 +78,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (cur is! AuthAuthenticated) return;
     try {
       final user = await _repo.me();
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(user, justRegistered: cur.justRegistered));
     } catch (_) {
       /* keep previous profile */
+    }
+  }
+
+  void _onJustRegisteredAck(AuthJustRegisteredAcknowledged event, Emitter<AuthState> emit) {
+    final cur = state;
+    if (cur is AuthAuthenticated && cur.justRegistered) {
+      emit(AuthAuthenticated(cur.user));
     }
   }
 

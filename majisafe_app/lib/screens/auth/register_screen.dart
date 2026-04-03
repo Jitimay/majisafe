@@ -34,10 +34,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(title: const Text('Register')),
       body: BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (p, c) =>
-            c is AuthUnauthenticated && (p is AuthLoading || p is AuthUnauthenticated),
+            (c is AuthUnauthenticated && (p is AuthLoading || p is AuthUnauthenticated)) ||
+            (p is AuthLoading && c is AuthAuthenticated && c.justRegistered),
         listener: (context, state) {
           if (state is AuthUnauthenticated && state.message != null) {
             showErrorSnackBar(context, state.message!);
+          }
+          if (state is AuthAuthenticated && state.justRegistered) {
+            final n = state.user.name?.trim();
+            final label = (n != null && n.isNotEmpty) ? n : state.user.phone;
+            showSuccessSnackBarGlobal('Welcome, $label! Your Regideso Wallet is ready.');
+            context.read<AuthBloc>().add(const AuthJustRegisteredAcknowledged());
           }
         },
         builder: (context, state) {

@@ -8,8 +8,10 @@ class ApiService {
       : _auth = authService,
         _dio = dio ?? Dio() {
     _dio.options.baseUrl = ApiConfig.baseUrl + ApiConfig.apiPrefix;
-    _dio.options.connectTimeout = const Duration(seconds: 20);
-    _dio.options.receiveTimeout = const Duration(seconds: 30);
+    // LAN / mobile networks can be slow to connect; cleartext HTTP on Android may also delay before failing.
+    _dio.options.connectTimeout = const Duration(seconds: 45);
+    _dio.options.sendTimeout = const Duration(seconds: 45);
+    _dio.options.receiveTimeout = const Duration(seconds: 60);
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {

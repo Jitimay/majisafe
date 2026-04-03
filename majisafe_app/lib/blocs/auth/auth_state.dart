@@ -21,12 +21,15 @@ class AuthLoading extends AuthState {
 
 /// Logged in with profile.
 class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated(this.user);
+  const AuthAuthenticated(this.user, {this.justRegistered = false});
 
   final User user;
 
+  /// True only right after a successful sign-up (for one-shot welcome UI).
+  final bool justRegistered;
+
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, justRegistered];
 }
 
 /// No valid session.

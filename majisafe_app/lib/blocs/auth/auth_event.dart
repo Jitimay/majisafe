@@ -49,3 +49,8 @@ class AuthLogoutPressed extends AuthEvent {
 class AuthSilentRefresh extends AuthEvent {
   const AuthSilentRefresh();
 }
+
+/// Clears [AuthAuthenticated.justRegistered] after the welcome UI was shown.
+class AuthJustRegisteredAcknowledged extends AuthEvent {
+  const AuthJustRegisteredAcknowledged();
+}

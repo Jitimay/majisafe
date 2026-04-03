@@ -15,13 +15,20 @@ class User extends Equatable {
   /// Parses `/api/auth/me` or login payload `user` object.
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
-      phone: json['phone'] as String,
-      name: json['name'] as String?,
-      role: json['role'] as String? ?? 'user',
+      id: _toInt(json['id']),
+      phone: json['phone']?.toString() ?? '',
+      name: json['name']?.toString(),
+      role: json['role']?.toString() ?? 'user',
       coinBalance: _toDouble(json['coin_balance']),
-      createdAt: json['created_at'] as String?,
+      createdAt: json['created_at']?.toString(),
     );
+  }
+
+  static int _toInt(dynamic v) {
+    if (v == null) return 0;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString()) ?? 0;
   }
 
   final int id;

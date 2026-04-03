@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:majisafe_app/blocs/auth/auth_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
+import 'package:majisafe_app/config/app_keys.dart';
 import 'package:majisafe_app/config/go_router_refresh.dart';
 import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/models/station.dart';
@@ -117,6 +118,7 @@ class RegidesoApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Regideso Wallet',
       theme: AppTheme.light(),
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       routerConfig: router,
     );
   }

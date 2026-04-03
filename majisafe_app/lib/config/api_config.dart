@@ -2,7 +2,8 @@
 class ApiConfig {
   ApiConfig._();
 
-  /// Android emulator: use `http://10.0.2.2:3000`. iOS simulator: `http://127.0.0.1:3000`.
+  /// Physical phone: use your PC's LAN IP, e.g. `http://192.168.1.50:3000` (not 127.0.0.1).
+  /// Android emulator: `http://10.0.2.2:3000`. Desktop/simulator on same machine: `http://127.0.0.1:3000`.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://127.0.0.1:3000',
