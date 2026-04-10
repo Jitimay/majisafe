@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Buy Water',
                         description: '1 coin = 1 litre',
                         color: const Color(0xFF1D9E75),
-                        onTap: () => context.push('/dispense/stations'),
+                        onTap: () => context.push('/water/buy'),
                       ),
                     ),
                     const SizedBox(width: 12),

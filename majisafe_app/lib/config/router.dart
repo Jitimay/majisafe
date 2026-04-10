@@ -18,6 +18,8 @@ import 'package:majisafe_app/screens/dispense/station_list_screen.dart';
 import 'package:majisafe_app/screens/electricity/buy_electricity_screen.dart';
 import 'package:majisafe_app/screens/electricity/electricity_result_screen.dart';
 import 'package:majisafe_app/models/electricity_order.dart';
+import 'package:majisafe_app/screens/water/buy_water_screen.dart';
+import 'package:majisafe_app/screens/water/water_result_screen.dart';
 import 'package:majisafe_app/screens/history/history_screen.dart';
 import 'package:majisafe_app/screens/history/transaction_detail_screen.dart';
 import 'package:majisafe_app/screens/home/home_screen.dart';
@@ -167,6 +169,16 @@ GoRouter createRouter({
           if (order == null) return const Scaffold(body: Center(child: Text('No order')));
           return ElectricityResultScreen(order: order);
         },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/water/buy',
+        builder: (_, __) => const BuyWaterScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/water/result',
+        builder: (_, __) => const WaterResultScreen(),
       ),
     ],
   );
