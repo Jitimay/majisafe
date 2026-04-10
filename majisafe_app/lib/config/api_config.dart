@@ -28,6 +28,8 @@ class ApiConfig {
   static String dispenseStatus(String txId) => '/dispense/status/$txId';
   static const String stations = '/stations';
   static String stationDetail(String id) => '/stations/$id';
+  static const String electricityBuy = '/electricity/buy';
+  static const String electricityHistory = '/electricity/history';
 
   /// REGIDESO merchant number shown in USSD instructions (align with backend admin phone in production).
   static const String regidesoMerchantPhone = '25761000000';

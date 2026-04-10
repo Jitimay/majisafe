@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:majisafe_app/blocs/auth/auth_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
+import 'package:majisafe_app/blocs/theme/theme_cubit.dart';
 import 'package:majisafe_app/config/app_keys.dart';
 import 'package:majisafe_app/config/go_router_refresh.dart';
 import 'package:majisafe_app/config/theme.dart';
@@ -14,6 +15,9 @@ import 'package:majisafe_app/screens/dispense/dispense_result_screen.dart';
 import 'package:majisafe_app/screens/dispense/dispense_screen.dart';
 import 'package:majisafe_app/screens/dispense/station_detail_screen.dart';
 import 'package:majisafe_app/screens/dispense/station_list_screen.dart';
+import 'package:majisafe_app/screens/electricity/buy_electricity_screen.dart';
+import 'package:majisafe_app/screens/electricity/electricity_result_screen.dart';
+import 'package:majisafe_app/models/electricity_order.dart';
 import 'package:majisafe_app/screens/history/history_screen.dart';
 import 'package:majisafe_app/screens/history/transaction_detail_screen.dart';
 import 'package:majisafe_app/screens/home/home_screen.dart';
@@ -150,6 +154,20 @@ GoRouter createRouter({
           return TransactionDetailScreen(tx: tx);
         },
       ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/electricity/buy',
+        builder: (_, __) => const BuyElectricityScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/electricity/result',
+        builder: (_, s) {
+          final order = s.extra as ElectricityOrder?;
+          if (order == null) return const Scaffold(body: Center(child: Text('No order')));
+          return ElectricityResultScreen(order: order);
+        },
+      ),
     ],
   );
 }
@@ -162,9 +180,12 @@ class RegidesoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.watch<ThemeCubit>().state;
     return MaterialApp.router(
       title: 'Regideso Wallet',
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       routerConfig: router,
     );

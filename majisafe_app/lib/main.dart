@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_event.dart';
 import 'package:majisafe_app/blocs/dispense/dispense_bloc.dart';
+import 'package:majisafe_app/blocs/electricity/electricity_bloc.dart';
+import 'package:majisafe_app/blocs/theme/theme_cubit.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_bloc.dart';
 import 'package:majisafe_app/config/go_router_refresh.dart';
 import 'package:majisafe_app/config/router.dart';
 import 'package:majisafe_app/repositories/auth_repository.dart';
+import 'package:majisafe_app/repositories/electricity_repository.dart';
 import 'package:majisafe_app/repositories/dispense_repository.dart';
 import 'package:majisafe_app/repositories/station_repository.dart';
 import 'package:majisafe_app/repositories/wallet_repository.dart';
@@ -18,12 +21,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().init();
 
+  final themeCubit = ThemeCubit();
+  await themeCubit.load();
+
   final authService = AuthService();
   final apiService = ApiService(authService: authService);
   final authRepository = AuthRepository(apiService: apiService, authService: authService);
   final walletRepository = WalletRepository(apiService: apiService);
   final stationRepository = StationRepository(apiService: apiService);
   final dispenseRepository = DispenseRepository(apiService: apiService);
+  final electricityRepository = ElectricityRepository(apiService: apiService);
 
   final authBloc = AuthBloc(authRepository: authRepository, authService: authService)
     ..add(const AuthCheckRequested());
@@ -38,6 +45,7 @@ void main() async {
         RepositoryProvider<WalletRepository>.value(value: walletRepository),
         RepositoryProvider<StationRepository>.value(value: stationRepository),
         RepositoryProvider<DispenseRepository>.value(value: dispenseRepository),
+        RepositoryProvider<ElectricityRepository>.value(value: electricityRepository),
         RepositoryProvider<ApiService>.value(value: apiService),
       ],
       child: MultiBlocProvider(
@@ -49,6 +57,10 @@ void main() async {
           BlocProvider(
             create: (_) => DispenseBloc(repository: dispenseRepository),
           ),
+          BlocProvider(
+            create: (_) => ElectricityBloc(repository: electricityRepository),
+          ),
+          BlocProvider<ThemeCubit>.value(value: themeCubit),
         ],
         child: RegidesoApp(router: router),
       ),

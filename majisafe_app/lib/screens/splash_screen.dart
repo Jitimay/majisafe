@@ -23,12 +23,26 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
+                  color: Colors.white,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                child: const Icon(Icons.water_drop_rounded, size: 56, color: Colors.white),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/majisafe_logo.png',
+                    width: 108,
+                    height: 108,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               const SizedBox(height: 28),
               Text(

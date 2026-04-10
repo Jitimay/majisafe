@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:majisafe_app/blocs/auth/auth_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_event.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
+import 'package:majisafe_app/blocs/theme/theme_cubit.dart';
 import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/widgets/user_profile_avatar.dart';
 
@@ -64,6 +65,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: 'Regideso Coins',
             value: u.coinBalance.toStringAsFixed(2),
           ),
+          const SizedBox(height: 20),
+          _ThemeSelector(),
           const SizedBox(height: 28),
           FilledButton.tonal(
             style: FilledButton.styleFrom(
@@ -106,6 +109,75 @@ class _ProfileTile extends StatelessWidget {
           leading: Icon(icon, color: AppTheme.primary),
           title: Text(title, style: TextStyle(fontSize: 12, color: AppTheme.textMuted, fontWeight: FontWeight.w600)),
           subtitle: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeSelector extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final current = context.watch<ThemeCubit>().state;
+    final cubit = context.read<ThemeCubit>();
+
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.palette_outlined, color: AppTheme.primary, size: 20),
+                const SizedBox(width: 10),
+                Text(
+                  'Appearance',
+                  style: TextStyle(fontSize: 12, color: AppTheme.textMuted, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            SegmentedButton<ThemeMode>(
+              style: SegmentedButton.styleFrom(
+                selectedBackgroundColor: AppTheme.primary,
+                selectedForegroundColor: Colors.white,
+              ),
+              segments: const [
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  icon: Icon(Icons.light_mode_rounded),
+                  label: Text('Light'),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  icon: Icon(Icons.brightness_auto_rounded),
+                  label: Text('Auto'),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  icon: Icon(Icons.dark_mode_rounded),
+                  label: Text('Dark'),
+                ),
+              ],
+              selected: {current},
+              onSelectionChanged: (val) {
+                switch (val.first) {
+                  case ThemeMode.light:
+                    cubit.setLight();
+                  case ThemeMode.dark:
+                    cubit.setDark();
+                  case ThemeMode.system:
+                    cubit.setSystem();
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

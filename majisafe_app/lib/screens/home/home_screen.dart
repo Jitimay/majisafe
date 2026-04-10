@@ -143,18 +143,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   footer: _activeStations != null ? '$_activeStations station(s) active' : null,
                 ),
                 const SizedBox(height: 22),
-                Text('Quick actions', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                Text('Services', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
-                      child: _HomeActionCard(
+                      child: _ServiceCard(
                         icon: Icons.water_drop_rounded,
-                        label: 'Dispense',
+                        label: 'Buy Water',
+                        description: '1 coin = 1 litre',
+                        color: const Color(0xFF1D9E75),
                         onTap: () => context.push('/dispense/stations'),
                       ),
                     ),
                     const SizedBox(width: 12),
+                    Expanded(
+                      child: _ServiceCard(
+                        icon: Icons.bolt_rounded,
+                        label: 'Buy Electricity',
+                        description: 'Pay with coins',
+                        color: const Color(0xFFF59E0B),
+                        onTap: () => context.push('/electricity/buy'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                Text('Quick actions', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
                     Expanded(
                       child: _HomeActionCard(
                         icon: Icons.add_card_rounded,
@@ -162,14 +180,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () => context.push('/wallet/topup'),
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _HomeActionCard(
+                        icon: Icons.receipt_long_rounded,
+                        label: 'History',
+                        onTap: () => context.go('/history'),
+                      ),
+                    ),
                   ],
-                ),
-                const SizedBox(height: 12),
-                _HomeActionCard(
-                  icon: Icons.receipt_long_rounded,
-                  label: 'Full transaction history',
-                  dense: true,
-                  onTap: () => context.go('/history'),
                 ),
                 const SizedBox(height: 26),
                 Text('Last activity', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
@@ -194,6 +213,86 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _ServiceCard extends StatelessWidget {
+  const _ServiceCard({
+    required this.icon,
+    required this.label,
+    required this.description,
+    required this.color,
+    required this.onTap,
+    this.comingSoon = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final String description;
+  final Color color;
+  final VoidCallback onTap;
+  final bool comingSoon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color.withValues(alpha: comingSoon ? 0.07 : 0.12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: color.withValues(alpha: comingSoon ? 0.15 : 0.25)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(icon, color: color, size: 26),
+                  ),
+                  if (comingSoon)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text('Soon', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: comingSoon ? AppTheme.textMuted : color,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+              ),
+            ],
+          ),
         ),
       ),
     );
