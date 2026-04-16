@@ -68,7 +68,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   }
 
   Future<void> _onHistory(WalletHistoryRequested event, Emitter<WalletState> emit) async {
-    // Do not emit WalletLoading here — it breaks the Wallet tab while History loads.
+    emit(const WalletHistoryLoading());
     try {
       final list = await _repo.fetchHistory();
       emit(WalletHistoryLoaded(list));

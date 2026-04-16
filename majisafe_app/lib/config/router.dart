@@ -20,6 +20,7 @@ import 'package:majisafe_app/screens/electricity/electricity_result_screen.dart'
 import 'package:majisafe_app/models/electricity_order.dart';
 import 'package:majisafe_app/screens/water/buy_water_screen.dart';
 import 'package:majisafe_app/screens/water/water_result_screen.dart';
+import 'package:majisafe_app/screens/simulate/simulate_topup_screen.dart';
 import 'package:majisafe_app/screens/history/history_screen.dart';
 import 'package:majisafe_app/screens/history/transaction_detail_screen.dart';
 import 'package:majisafe_app/screens/home/home_screen.dart';
@@ -179,6 +180,11 @@ GoRouter createRouter({
         parentNavigatorKey: _rootNavigatorKey,
         path: '/water/result',
         builder: (_, __) => const WaterResultScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/simulate/topup',
+        builder: (_, __) => const SimulateTopupScreen(),
       ),
     ],
   );

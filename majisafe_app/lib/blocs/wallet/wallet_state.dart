@@ -46,6 +46,10 @@ class WalletHistoryLoaded extends WalletState {
   List<Object?> get props => [transactions];
 }
 
+class WalletHistoryLoading extends WalletState {
+  const WalletHistoryLoading();
+}
+
 class WalletFailure extends WalletState {
   const WalletFailure(this.message, {this.cachedCoins, this.cachedAt});
 

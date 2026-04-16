@@ -10,6 +10,7 @@ import 'package:majisafe_app/config/go_router_refresh.dart';
 import 'package:majisafe_app/config/router.dart';
 import 'package:majisafe_app/repositories/auth_repository.dart';
 import 'package:majisafe_app/repositories/electricity_repository.dart';
+import 'package:majisafe_app/repositories/simulate_repository.dart';
 import 'package:majisafe_app/repositories/dispense_repository.dart';
 import 'package:majisafe_app/repositories/station_repository.dart';
 import 'package:majisafe_app/repositories/wallet_repository.dart';
@@ -31,6 +32,7 @@ void main() async {
   final stationRepository = StationRepository(apiService: apiService);
   final dispenseRepository = DispenseRepository(apiService: apiService);
   final electricityRepository = ElectricityRepository(apiService: apiService);
+  final simulateRepository = SimulateRepository(apiService: apiService);
 
   final authBloc = AuthBloc(authRepository: authRepository, authService: authService)
     ..add(const AuthCheckRequested());
@@ -46,6 +48,7 @@ void main() async {
         RepositoryProvider<StationRepository>.value(value: stationRepository),
         RepositoryProvider<DispenseRepository>.value(value: dispenseRepository),
         RepositoryProvider<ElectricityRepository>.value(value: electricityRepository),
+        RepositoryProvider<SimulateRepository>.value(value: simulateRepository),
         RepositoryProvider<ApiService>.value(value: apiService),
       ],
       child: MultiBlocProvider(

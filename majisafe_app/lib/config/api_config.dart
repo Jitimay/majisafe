@@ -6,7 +6,7 @@ class ApiConfig {
   /// Android emulator: `http://10.0.2.2:3000`. Desktop/simulator on same machine: `http://127.0.0.1:3000`.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://127.0.0.1:3000',
+    defaultValue: 'https://majisafe-backend.andasy.dev',
   );
 
   static const String apiPrefix = '/api';
@@ -30,6 +30,8 @@ class ApiConfig {
   static String stationDetail(String id) => '/stations/$id';
   static const String electricityBuy = '/electricity/buy';
   static const String electricityHistory = '/electricity/history';
+  static const String simulateTopup = '/simulate/topup';
+  static const String simulateHistory = '/simulate/history';
 
   /// REGIDESO merchant number shown in USSD instructions (align with backend admin phone in production).
   static const String regidesoMerchantPhone = '25761000000';

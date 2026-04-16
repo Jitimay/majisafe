@@ -21,7 +21,6 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
   @override
   void initState() {
     super.initState();
-    // Refresh wallet balance after purchase
     context.read<WalletBloc>().add(const WalletLoadRequested());
   }
 
@@ -33,9 +32,10 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
         title: const Text('Purchase Complete'),
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Success icon
             Container(
@@ -51,13 +51,16 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
             Text(
               'Electricity Purchased!',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
             Text(
               'Enter the token below on your meter',
               style: TextStyle(color: AppTheme.textMuted),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
+
             // Token card
             Container(
               width: double.infinity,
@@ -79,7 +82,15 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
               ),
               child: Column(
                 children: [
-                  const Text('TOKEN', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2)),
+                  const Text(
+                    'TOKEN',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     order.token,
@@ -106,23 +117,29 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // Details
+
+            // Details card
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1)),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+                ),
               ),
               child: Column(
                 children: [
                   _Row(label: 'Meter', value: order.meterNumber),
                   _Row(label: 'Energy', value: '${order.kwh.toStringAsFixed(0)} kWh'),
-                  _Row(label: 'Coins spent', value: order.coins.toStringAsFixed(0)),
+                  _Row(label: 'Coins spent', value: '${order.coins.toStringAsFixed(0)}'),
                 ],
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 32),
+
+            // Actions
             SizedBox(
               width: double.infinity,
               child: FilledButton(
@@ -134,12 +151,15 @@ class _ElectricityResultScreenState extends State<ElectricityResultScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            TextButton(
-              onPressed: () {
-                context.read<ElectricityBloc>().add(const ElectricityReset());
-                context.pushReplacement('/electricity/buy');
-              },
-              child: const Text('Buy Again'),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  context.read<ElectricityBloc>().add(const ElectricityReset());
+                  context.pushReplacement('/electricity/buy');
+                },
+                child: const Text('Buy Again'),
+              ),
             ),
           ],
         ),

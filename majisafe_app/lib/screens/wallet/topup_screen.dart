@@ -147,6 +147,20 @@ class _TopUpScreenState extends State<TopUpScreen> {
                         )
                       : const Text('Continue'),
                 ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.science_rounded, color: Colors.orange),
+                  label: const Text(
+                    'Simulate Payment (Sandbox)',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.orange.withValues(alpha: 0.5)),
+                    minimumSize: const Size.fromHeight(48),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  onPressed: loading ? null : () => context.push('/simulate/topup'),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'API: ${ApiConfig.baseUrl}',
