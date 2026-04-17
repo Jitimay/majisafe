@@ -70,10 +70,17 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   Future<void> _onHistory(WalletHistoryRequested event, Emitter<WalletState> emit) async {
     emit(const WalletHistoryLoading());
     try {
-      final list = await _repo.fetchHistory();
+      final list = await _repo.fetchHistory().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw Exception('Request timed out. Check your connection.'),
+      );
       emit(WalletHistoryLoaded(list));
     } on DioException catch (e) {
-      emit(WalletFailure(e.message ?? 'History failed'));
+      final data = e.response?.data;
+      final msg = (data is Map && data['message'] is String)
+          ? data['message'] as String
+          : e.message ?? 'Failed to load history';
+      emit(WalletFailure(msg));
     } catch (e) {
       emit(WalletFailure(e.toString()));
     }

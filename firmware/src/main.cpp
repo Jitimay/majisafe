@@ -10,11 +10,14 @@
 #include "modules/display.h"
 #include "modules/flowSensor.h"
 #include "modules/ledIndicator.h"
+#include "modules/pump.h"
 #include "modules/sim800.h"
 #include "modules/valve.h"
 #include "services/dispenseService.h"
 #include "services/heartbeat.h"
 #include "services/otaUpdate.h"
+#include "services/pumpPoller.h"
+#include "services/tankSimulator.h"
 
 static Sim800 g_modem;
 static DispenseService g_dispense;
@@ -75,6 +78,8 @@ void setup() {
   FlowSensor::begin();
   LedIndicator::begin();
   Display::begin();
+  Pump::begin();
+  TankSimulator::begin();
 
   esp_task_wdt_init(60, true);
   esp_task_wdt_add(NULL);
@@ -92,6 +97,7 @@ void setup() {
     return;
   }
 
+  PumpPoller::begin(&g_modem);
   LedIndicator::set(LedIndicator::Mode::Ready);
   Display::show(l1, "Ready");
   s_nextPoll = millis();
@@ -110,6 +116,10 @@ void loop() {
   g_dispense.tick();
 
   uint32_t now = millis();
+
+  PumpPoller::tick();
+  TankSimulator::tick();
+  Pump::tickRuntime();
 
   if (!g_dispense.isBusy()) {
     if (now >= s_nextPoll) {

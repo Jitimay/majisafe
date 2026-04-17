@@ -4,6 +4,7 @@
 #include "../modules/flowSensor.h"
 #include "../modules/ledIndicator.h"
 #include "../modules/valve.h"
+#include "../services/tankSimulator.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <esp_task_wdt.h>
@@ -49,6 +50,8 @@ void DispenseService::showLines(float cur, float target) {
 void DispenseService::finishConfirm(float actual) {
   Valve::closeValve();
   delay(500);
+  // Update simulated tank level
+  TankSimulator::onDispenseComplete(actual);
   char body[256];
   JsonDocument doc(192);
   doc["station_id"] = MAJISAFE_STATION_ID;

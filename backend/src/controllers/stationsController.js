@@ -10,7 +10,9 @@ export function listStations(req, res) {
     const db = getDb();
     const rows = db
       .prepare(
-        `SELECT id, name, location, status, tank_level, last_seen, sim_number FROM stations ORDER BY id`
+        `SELECT id, name, location, status, tank_level, last_seen, sim_number,
+                pump_1_active, pump_2_active, pump_1_runtime_hours, pump_2_runtime_hours
+         FROM stations ORDER BY id`
       )
       .all();
     const online = rows.filter((r) => r.status === 'online' || r.status === 'dispensing').length;
@@ -30,7 +32,9 @@ export function getStation(req, res) {
     const db = getDb();
     const station = db
       .prepare(
-        `SELECT id, name, location, status, tank_level, last_seen, sim_number FROM stations WHERE id = ?`
+        `SELECT id, name, location, status, tank_level, last_seen, sim_number,
+                pump_1_active, pump_2_active, pump_1_runtime_hours, pump_2_runtime_hours
+         FROM stations WHERE id = ?`
       )
       .get(id);
     if (!station) {
@@ -52,7 +56,17 @@ export function getStation(req, res) {
  * Heartbeat from firmware: updates presence and telemetry.
  */
 export function heartbeat(req, res) {
-  const { station_id, status, tank_level, uptime_seconds, firmware_version } = req.body;
+  const {
+    station_id,
+    status,
+    tank_level,
+    uptime_seconds,
+    firmware_version,
+    pump_1_active,
+    pump_2_active,
+    pump_1_runtime_seconds,
+    pump_2_runtime_seconds,
+  } = req.body;
   try {
     const db = getDb();
     const row = db.prepare(`SELECT id FROM stations WHERE id = ?`).get(station_id);
@@ -63,9 +77,38 @@ export function heartbeat(req, res) {
       return res.status(400).json(apiError('STATION_MISMATCH', 'Station mismatch'));
     }
     const st = status || 'online';
+
+    // Convert runtime seconds to hours if provided
+    const p1Hours = pump_1_runtime_seconds != null ? pump_1_runtime_seconds / 3600 : null;
+    const p2Hours = pump_2_runtime_seconds != null ? pump_2_runtime_seconds / 3600 : null;
+
     db.prepare(
-      `UPDATE stations SET status = ?, tank_level = COALESCE(?, tank_level), last_seen = datetime('now') WHERE id = ?`
-    ).run(st, tank_level ?? null, station_id);
+      `UPDATE stations
+       SET status = ?,
+           tank_level = COALESCE(?, tank_level),
+           last_seen = datetime('now'),
+           pump_1_active = COALESCE(?, pump_1_active),
+           pump_2_active = COALESCE(?, pump_2_active),
+           pump_1_runtime_hours = COALESCE(?, pump_1_runtime_hours),
+           pump_2_runtime_hours = COALESCE(?, pump_2_runtime_hours)
+       WHERE id = ?`
+    ).run(
+      st,
+      tank_level ?? null,
+      pump_1_active != null ? (pump_1_active ? 1 : 0) : null,
+      pump_2_active != null ? (pump_2_active ? 1 : 0) : null,
+      p1Hours,
+      p2Hours,
+      station_id
+    );
+
+    // Insert tank level history row if tank_level provided
+    if (tank_level != null) {
+      db.prepare(
+        `INSERT INTO tank_level_history (station_id, tank_level) VALUES (?, ?)`
+      ).run(station_id, tank_level);
+    }
+
     return res.json({
       success: true,
       station_id,

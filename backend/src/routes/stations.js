@@ -27,6 +27,10 @@ router.post(
     body('tank_level').optional().isFloat({ min: 0, max: 100 }),
     body('uptime_seconds').optional().isInt({ min: 0 }),
     body('firmware_version').optional().trim().isLength({ max: 40 }),
+    body('pump_1_active').optional().isBoolean(),
+    body('pump_2_active').optional().isBoolean(),
+    body('pump_1_runtime_seconds').optional().isFloat({ min: 0 }),
+    body('pump_2_runtime_seconds').optional().isFloat({ min: 0 }),
   ],
   validate,
   stations.heartbeat

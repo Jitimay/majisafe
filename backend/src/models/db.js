@@ -120,7 +120,77 @@ function runMigrations(db) {
       CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
       CREATE INDEX IF NOT EXISTS idx_device_commands_station ON device_commands(station_id, status);
       CREATE INDEX IF NOT EXISTS idx_pending_topups_user ON pending_topups(user_id, fulfilled);
+
+      CREATE TABLE IF NOT EXISTS electricity_orders (
+        id TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        meter_number TEXT NOT NULL,
+        coins REAL NOT NULL,
+        kwh REAL NOT NULL,
+        token TEXT,
+        status TEXT DEFAULT 'pending',
+        note TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_electricity_orders_user ON electricity_orders(user_id);
+
+      CREATE TABLE IF NOT EXISTS simulated_payments (
+        id TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        amount_bif REAL NOT NULL,
+        coins REAL NOT NULL,
+        payment_ref TEXT NOT NULL,
+        method TEXT DEFAULT 'simulate',
+        note TEXT,
+        status TEXT DEFAULT 'completed',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_simulated_payments_user ON simulated_payments(user_id);
     `);
+    // pump_commands table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS pump_commands (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        station_id   TEXT    NOT NULL REFERENCES stations(id),
+        pump_number  INTEGER NOT NULL CHECK (pump_number IN (1, 2)),
+        action       TEXT    NOT NULL CHECK (action IN ('activate', 'deactivate')),
+        status       TEXT    NOT NULL DEFAULT 'pending'
+                             CHECK (status IN ('pending', 'sent', 'acknowledged')),
+        created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+        acknowledged_at DATETIME
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_pump_commands_station_status
+        ON pump_commands(station_id, status);
+
+      CREATE TABLE IF NOT EXISTS tank_level_history (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        station_id  TEXT    NOT NULL REFERENCES stations(id),
+        tank_level  REAL    NOT NULL CHECK (tank_level BETWEEN 0 AND 100),
+        recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_tank_level_history_station_time
+        ON tank_level_history(station_id, recorded_at);
+    `);
+
+    // Add pump columns to stations if absent
+    const si = db.prepare(`PRAGMA table_info(stations)`).all();
+    if (!si.some((c) => c.name === 'pump_1_active')) {
+      db.exec(`ALTER TABLE stations ADD COLUMN pump_1_active INTEGER DEFAULT 0`);
+    }
+    if (!si.some((c) => c.name === 'pump_2_active')) {
+      db.exec(`ALTER TABLE stations ADD COLUMN pump_2_active INTEGER DEFAULT 0`);
+    }
+    if (!si.some((c) => c.name === 'pump_1_runtime_hours')) {
+      db.exec(`ALTER TABLE stations ADD COLUMN pump_1_runtime_hours REAL DEFAULT 0`);
+    }
+    if (!si.some((c) => c.name === 'pump_2_runtime_hours')) {
+      db.exec(`ALTER TABLE stations ADD COLUMN pump_2_runtime_hours REAL DEFAULT 0`);
+    }
+
     const ti = db.prepare(`PRAGMA table_info(transactions)`).all();
     if (!ti.some((c) => c.name === 'note')) {
       db.exec(`ALTER TABLE transactions ADD COLUMN note TEXT`);

@@ -1,5 +1,7 @@
 #include "heartbeat.h"
 #include "../config/config.h"
+#include "../modules/pump.h"
+#include "../services/tankSimulator.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
@@ -16,13 +18,18 @@ void Heartbeat::tick(Sim800 &modem, const char *statusText) {
   }
   s_last = now;
 
-  char body[320];
-  JsonDocument doc(256);
-  doc["station_id"] = MAJISAFE_STATION_ID;
-  doc["status"] = statusText;
-  doc["tank_level"] = 100;
-  doc["uptime_seconds"] = static_cast<uint32_t>(now / 1000UL);
-  doc["firmware_version"] = MAJISAFE_FIRMWARE_VERSION;
+  char body[512];
+  JsonDocument doc;
+  doc["station_id"]            = MAJISAFE_STATION_ID;
+  doc["status"]                = statusText;
+  doc["tank_level"]            = TankSimulator::getLevel();
+  doc["uptime_seconds"]        = static_cast<uint32_t>(now / 1000UL);
+  doc["firmware_version"]      = MAJISAFE_FIRMWARE_VERSION;
+  doc["pump_1_active"]         = Pump::isActive(1);
+  doc["pump_2_active"]         = Pump::isActive(2);
+  doc["pump_1_runtime_seconds"] = Pump::getRuntimeSeconds(1);
+  doc["pump_2_runtime_seconds"] = Pump::getRuntimeSeconds(2);
+
   if (serializeJson(doc, body, sizeof(body)) == 0) {
     return;
   }

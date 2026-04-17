@@ -10,8 +10,8 @@
 #define MAJISAFE_STATION_SECRET "station_shared_secret_change_me"
 
 // --- Backend (HTTP; use plain HTTP unless your modem firmware supports HTTPS) ---
-#define MAJISAFE_SERVER_HOST "192.168.1.100"
-#define MAJISAFE_SERVER_PORT 3000
+#define MAJISAFE_SERVER_HOST "majisafe-backend.andasy.dev"
+#define MAJISAFE_SERVER_PORT 80
 
 // --- GPRS APN (Burundi carriers — replace with your SIM) ---
 #define MAJISAFE_GPRS_APN "internet"
@@ -47,5 +47,19 @@
 #define MAJISAFE_MODEM_TX 26
 
 #define MAJISAFE_FIRMWARE_VERSION "1.0.0"
+
+// --- Pump relay pins ---
+#define MAJISAFE_PUMP_1_PIN               33
+#define MAJISAFE_PUMP_2_PIN               32
+
+// --- Tank simulation constants ---
+#define MAJISAFE_TANK_CAPACITY_LITRES     5000.0f
+#define MAJISAFE_PUMP_FILL_RATE_PCT_PER_S 0.005f   // fills 0→100% in ~200 s
+#define MAJISAFE_PUMP_POLL_MS             10000UL
+#define MAJISAFE_NVS_PERSIST_INTERVAL_MS  60000UL
+
+// --- NVS keys ---
+#define MAJISAFE_NVS_NAMESPACE "majisafe"
+#define MAJISAFE_NVS_TANK_KEY  "tank_pct"
 
 #endif

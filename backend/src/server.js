@@ -12,6 +12,10 @@ import dispenseRoutes from './routes/dispense.js';
 import stationsRoutes from './routes/stations.js';
 import adminRoutes from './routes/admin.js';
 import smsRoutes from './routes/sms.js';
+import electricityRoutes from './routes/electricity.js';
+import simulateRoutes from './routes/simulate.js';
+import pumpsRoutes from './routes/pumps.js';
+import analyticsRoutes from './routes/analytics.js';
 
 /**
  * Creates and configures the Express application.
@@ -33,6 +37,10 @@ function createApp() {
   app.use('/api/stations', stationsRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api/sms', smsRoutes);
+  app.use('/api/electricity', electricityRoutes);
+  app.use('/api/simulate', simulateRoutes);
+  app.use('/api/pumps', pumpsRoutes);
+  app.use('/api/analytics', analyticsRoutes);
 
   app.use(errorHandler);
   return app;
