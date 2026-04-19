@@ -201,6 +201,7 @@ class RegidesoApp extends StatelessWidget {
     final themeMode = context.watch<ThemeCubit>().state;
     return MaterialApp.router(
       title: 'Regideso Wallet',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,

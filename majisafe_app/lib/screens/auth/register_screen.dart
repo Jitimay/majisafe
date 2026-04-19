@@ -9,6 +9,7 @@ import 'package:majisafe_app/blocs/auth/auth_event.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
 import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/widgets/error_snackbar.dart';
+import 'package:majisafe_app/widgets/majisafe_logo.dart';
 
 /// New user registration for MajiSafe.
 class RegisterScreen extends StatefulWidget {
@@ -142,6 +143,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const Center(child: MajiSafeLogo(height: 60)),
+                  const SizedBox(height: 24),
                   Text(
                     'Join MajiSafe',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(

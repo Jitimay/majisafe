@@ -34,4 +34,14 @@ router.get('/audit', admin.auditLedger);
 
 router.get('/stations', admin.adminStations);
 
+router.patch(
+  '/stations/:id',
+  [
+    body('status').optional().isIn(['online', 'offline', 'dispensing', 'error']).withMessage('Invalid status'),
+    body('tank_level').optional().isFloat({ min: 0, max: 100 }).withMessage('tank_level must be 0–100'),
+  ],
+  validate,
+  admin.adminUpdateStation
+);
+
 export default router;

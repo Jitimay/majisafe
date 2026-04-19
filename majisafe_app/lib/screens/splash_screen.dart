@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:majisafe_app/config/theme.dart';
+import 'package:majisafe_app/widgets/majisafe_logo.dart';
 
 /// Shown while [AuthBloc] restores the session from secure storage.
 class SplashScreen extends StatelessWidget {
@@ -23,7 +24,7 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -35,14 +36,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/majisafe_logo.png',
-                    width: 108,
-                    height: 108,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                child: const MajiSafeLogo(width: 80, height: 80),
               ),
               const SizedBox(height: 28),
               Text(

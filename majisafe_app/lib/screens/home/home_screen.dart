@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:majisafe_app/blocs/auth/auth_bloc.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
@@ -8,6 +9,7 @@ import 'package:majisafe_app/blocs/wallet/wallet_bloc.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_event.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_state.dart';
 import 'package:majisafe_app/config/theme.dart';
+import 'package:majisafe_app/widgets/majisafe_logo.dart';
 import 'package:majisafe_app/repositories/station_repository.dart';
 import 'package:majisafe_app/models/transaction.dart';
 import 'package:majisafe_app/models/user.dart';
@@ -52,7 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final name = user != null ? (user.name ?? user.phone) : '';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('MajiSafe')),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const MajiSafeLogo(height: 32),
+            const SizedBox(width: 8),
+            const Text('MajiSafe'),
+          ],
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           context.read<WalletBloc>().add(const WalletLoadRequested());
@@ -149,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: _ServiceCard(
-                        icon: Icons.water_drop_rounded,
+                        icon: HugeIcons.strokeRoundedDroplet,
                         label: 'Buy Water',
                         description: '1 coin = 1 litre',
                         color: const Color(0xFF1D9E75),
@@ -159,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _ServiceCard(
-                        icon: Icons.bolt_rounded,
+                        icon: HugeIcons.strokeRoundedFlash,
                         label: 'Buy Electricity',
                         description: 'Pay with coins',
                         color: const Color(0xFFF59E0B),
@@ -175,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: _HomeActionCard(
-                        icon: Icons.add_card_rounded,
+                        icon: HugeIcons.strokeRoundedWallet01,
                         label: 'Top up',
                         onTap: () => context.push('/wallet/topup'),
                       ),
@@ -183,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _HomeActionCard(
-                        icon: Icons.receipt_long_rounded,
+                        icon: HugeIcons.strokeRoundedTransaction,
                         label: 'History',
                         onTap: () => context.go('/history'),
                       ),
@@ -260,7 +270,7 @@ class _ServiceCard extends StatelessWidget {
                       color: color.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(icon, color: color, size: 26),
+                    child: HugeIcon(icon: icon, color: color, size: 26),
                   ),
                   if (comingSoon)
                     Positioned(
@@ -334,7 +344,7 @@ class _HomeActionCard extends StatelessWidget {
                   color: AppTheme.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: AppTheme.primary, size: dense ? 22 : 26),
+                child: HugeIcon(icon: icon, color: AppTheme.primary, size: dense ? 22 : 26),
               ),
               SizedBox(width: dense ? 12 : 14),
               Expanded(

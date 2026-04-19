@@ -1,0 +1,43 @@
+<svg width="100%" viewBox="0 0 690 340" role="img" xmlns="http://www.w3.org/2000/svg" style="">
+<title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">MajiSafe logo</title>
+<desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">MajiSafe logo — a teal water drop containing a white shield with a lightning bolt, beside the wordmark MajiSafe with tagline Smart Water · Smart Power</desc>
+
+<defs>
+  <clipPath id="dropClip">
+    <path d="M340 52 C340 52 290 110 270 155 C252 196 258 240 300 258 C320 267 340 267 340 267 C340 267 360 267 380 258 C422 240 428 196 410 155 C390 110 340 52 340 52Z"/>
+  </clipPath>
+  <linearGradient id="dropGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1D9E75"/>
+    <stop offset="100%" stop-color="#085041"/>
+  </linearGradient>
+  <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#e1f5ee" stop-opacity="1"/>
+  </linearGradient>
+</defs>
+
+<!-- ── Drop shape ── -->
+<path d="M340 52 C340 52 290 110 270 155 C252 196 258 240 300 258 C320 267 340 267 340 267 C340 267 360 267 380 258 C422 240 428 196 410 155 C390 110 340 52 340 52Z" fill="url(#dropGrad)" stroke="none" style="stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ── Inner drop highlight (shine) ── -->
+<ellipse cx="322" cy="148" rx="9" ry="22" fill="#ffffff" fill-opacity="0.18" transform="rotate(-18 322 148)" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ── Shield inside drop ── -->
+<path d="M340 98 L364 110 L364 160 C364 178 352 192 340 198 C328 192 316 178 316 160 L316 110 Z" fill="url(#shieldGrad)" stroke="none" style="stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ── Lightning bolt inside shield ── -->
+<path d="M344 116 L333 148 L341 148 L336 182 L351 148 L343 148 L348 116 Z" fill="#1D9E75" stroke="none" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ── Wordmark: Maji ── -->
+<text x="371.94" y="158" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="72" font-weight="800" letter-spacing="-2" fill="#1D9E75" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, &quot;Helvetica Neue&quot;, sans-serif;font-size:72px;font-weight:800;text-anchor:start;dominant-baseline:auto">Maji</text>
+
+<!-- ── Wordmark: Safe ── -->
+<text x="371.94" y="158" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="72" font-weight="800" letter-spacing="-2" fill="#085041" dx="164" style="fill:rgb(8, 80, 65);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, &quot;Helvetica Neue&quot;, sans-serif;font-size:72px;font-weight:800;text-anchor:start;dominant-baseline:auto">Safe</text>
+
+<!-- ── Tagline ── -->
+<text x="370.36" y="188" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="15" font-weight="400" letter-spacing="3" fill="#1D9E75" text-anchor="start" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, &quot;Helvetica Neue&quot;, sans-serif;font-size:15px;font-weight:400;text-anchor:start;dominant-baseline:auto">SMART WATER · SMART POWER</text>
+
+<!-- ── Thin rule under tagline ── -->
+<line x1="440" y1="196" x2="636" y2="196" stroke="#1D9E75" stroke-width="1" opacity="0.4" style="fill:rgb(0, 0, 0);stroke:rgb(29, 158, 117);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+</svg>

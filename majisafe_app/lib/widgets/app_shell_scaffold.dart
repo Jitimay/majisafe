@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_bloc.dart';
 import 'package:majisafe_app/blocs/wallet/wallet_event.dart';
 import 'package:majisafe_app/config/theme.dart';
@@ -13,23 +14,23 @@ class AppShellScaffold extends StatelessWidget {
 
   static const List<NavigationDestination> _destinations = [
     NavigationDestination(
-      icon: Icon(Icons.home_outlined),
-      selectedIcon: Icon(Icons.home_rounded),
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01, color: AppTheme.textMuted),
+      selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedHome01, color: AppTheme.primary),
       label: 'Home',
     ),
     NavigationDestination(
-      icon: Icon(Icons.account_balance_wallet_outlined),
-      selectedIcon: Icon(Icons.account_balance_wallet_rounded),
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedWallet01, color: AppTheme.textMuted),
+      selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedWallet01, color: AppTheme.primary),
       label: 'Wallet',
     ),
     NavigationDestination(
-      icon: Icon(Icons.receipt_long_outlined),
-      selectedIcon: Icon(Icons.receipt_long_rounded),
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedTransaction, color: AppTheme.textMuted),
+      selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedTransaction, color: AppTheme.primary),
       label: 'History',
     ),
     NavigationDestination(
-      icon: Icon(Icons.person_outline_rounded),
-      selectedIcon: Icon(Icons.person_rounded),
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedUser, color: AppTheme.textMuted),
+      selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedUser, color: AppTheme.primary),
       label: 'Profile',
     ),
   ];

@@ -6,6 +6,7 @@ import 'package:majisafe_app/blocs/auth/auth_event.dart';
 import 'package:majisafe_app/blocs/auth/auth_state.dart';
 import 'package:majisafe_app/config/theme.dart';
 import 'package:majisafe_app/widgets/error_snackbar.dart';
+import 'package:majisafe_app/widgets/majisafe_logo.dart';
 
 /// Phone + password sign-in for Regideso Wallet.
 class LoginScreen extends StatefulWidget {
@@ -56,14 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.water_drop_rounded, size: 48, color: Colors.white),
-                      ),
+                      const MajiSafeLogo(height: 120),
                       const SizedBox(height: 20),
                       Text(
                         'Regideso Wallet',

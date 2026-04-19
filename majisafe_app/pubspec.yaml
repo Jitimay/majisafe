@@ -21,6 +21,8 @@ dependencies:
   google_fonts: ^6.2.1
   connectivity_plus: ^6.1.4
   image_picker: ^1.1.2
+  flutter_svg: ^2.0.10+1
+  hugeicons: ^0.0.7
 
 dev_dependencies:
   flutter_test:
@@ -31,11 +33,12 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/images/majisafe_logo.png
+  image_path: assets/images/icon_maji_safe.png
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: assets/images/majisafe_logo.png
+  adaptive_icon_foreground: assets/images/icon_maji_safe.png
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/majisafe_logo.png
+    - assets/images/majisafe_logo.svg
+    - assets/images/icon_maji_safe.png

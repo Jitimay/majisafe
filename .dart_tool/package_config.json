@@ -224,6 +224,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_svg",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/flutter_svg-2.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///home/josh/development/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -258,6 +264,12 @@
       "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "hugeicons",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/hugeicons-0.0.11",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "image",
@@ -402,6 +414,12 @@
       "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/path-1.9.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "path_parsing",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/path_parsing-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "path_provider",
@@ -558,6 +576,24 @@
       "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/typed_data-1.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "vector_graphics",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/vector_graphics-1.1.21",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "vector_graphics_codec",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.13",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "vector_graphics_compiler",
+      "rootUri": "file:///home/josh/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
     },
     {
       "name": "vector_math",

@@ -95,3 +95,36 @@ export function adminStations(req, res) {
     return res.status(500).json(apiError('INTERNAL_ERROR', 'Could not load stations'));
   }
 }
+
+/**
+ * PATCH /api/admin/stations/:id — update station status, tank_level, etc.
+ * Useful for testing without physical hardware.
+ */
+export function adminUpdateStation(req, res) {
+  const { id } = req.params;
+  const { status, tank_level } = req.body;
+  const db = getDb();
+  try {
+    const station = db.prepare(`SELECT id FROM stations WHERE id = ?`).get(id);
+    if (!station) {
+      return res.status(404).json(apiError('STATION_NOT_FOUND', 'Station not found'));
+    }
+    const allowed = ['online', 'offline', 'dispensing', 'error'];
+    if (status && !allowed.includes(status)) {
+      return res.status(400).json(apiError('INVALID_STATUS', `status must be one of: ${allowed.join(', ')}`));
+    }
+    const fields = [];
+    const params = [];
+    if (status !== undefined)      { fields.push(`status = ?`);      params.push(status); }
+    if (tank_level !== undefined)  { fields.push(`tank_level = ?`);  params.push(Number(tank_level)); }
+    fields.push(`last_seen = datetime('now')`);
+    params.push(id);
+    db.prepare(`UPDATE stations SET ${fields.join(', ')} WHERE id = ?`).run(...params);
+    const updated = db.prepare(`SELECT * FROM stations WHERE id = ?`).get(id);
+    log('info', 'admin updated station', { id, status, tank_level });
+    return res.json({ success: true, station: updated });
+  } catch (e) {
+    log('error', 'adminUpdateStation failed', { err: String(e) });
+    return res.status(500).json(apiError('INTERNAL_ERROR', 'Could not update station'));
+  }
+}
