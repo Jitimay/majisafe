@@ -1,11 +1,20 @@
-app "majisafe-dashboard" {
-  build {
-    command = "npm install && npm run build"
-    env = {
-      VITE_API_BASE_URL = "https://majisafe-backend.andasy.dev"
-    }
+# MajiSafe Dashboard — Andasy deployment config
+
+app_name = "majisafe-dashboard"
+
+app {
+  env = {}
+
+  port           = 80
+  primary_region = "kgl"
+
+  compute {
+    cpu      = 1
+    memory   = 256
+    cpu_kind = "shared"
   }
-  publish {
-    directory = "dist"
+
+  process {
+    name = "majisafe-dashboard"
   }
 }
