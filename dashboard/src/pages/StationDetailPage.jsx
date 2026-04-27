@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useStations } from '../hooks/useStations.js';
 import { usePumpStatus, usePumpCommand } from '../hooks/usePumpStatus.js';
 import { useRecommendation } from '../hooks/useRecommendation.js';
 import { useDailyUsage, useHourlyHeatmap } from '../hooks/useAnalytics.js';
+import { updateStation, cancelDispense } from '../api/stations.js';
 import TankGauge from '../components/TankGauge.jsx';
 import PumpCard from '../components/PumpCard.jsx';
 import RecommendationPanel from '../components/RecommendationPanel.jsx';
 import DailyChart from '../components/DailyChart.jsx';
 import HeatmapGrid from '../components/HeatmapGrid.jsx';
+import WaterLossPanel from '../components/WaterLossPanel.jsx';
 import Header from '../components/Header.jsx';
 
 function StatusBadge({ status }) {
@@ -39,6 +42,39 @@ export default function StationDetailPage() {
 
   const { data: stationsData, isFetching } = useStations();
   const station = stationsData?.stations?.find((s) => s.id === id);
+  const queryClient = useQueryClient();
+  const [statusPending, setStatusPending] = useState(false);
+  const [cancelPending, setCancelPending] = useState(false);
+
+  async function handleStatusToggle() {
+    if (!station) return;
+    const newStatus = station.status === 'offline' ? 'online' : 'offline';
+    setStatusPending(true);
+    try {
+      await updateStation(id, { status: newStatus });
+      queryClient.invalidateQueries({ queryKey: ['stations'] });
+    } catch {
+      setToast('Failed to update station status.');
+      setTimeout(() => setToast(null), 4000);
+    } finally {
+      setStatusPending(false);
+    }
+  }
+
+  async function handleCancelDispense() {
+    setCancelPending(true);
+    try {
+      const result = await cancelDispense(id);
+      setToast(`✓ ${result.message}`);
+      setTimeout(() => setToast(null), 5000);
+      queryClient.invalidateQueries({ queryKey: ['stations'] });
+    } catch {
+      setToast('Failed to cancel dispensing.');
+      setTimeout(() => setToast(null), 4000);
+    } finally {
+      setCancelPending(false);
+    }
+  }
 
   const { data: pumpData } = usePumpStatus(id);
   const pumpMutation = usePumpCommand(id);
@@ -67,10 +103,11 @@ export default function StationDetailPage() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-red-900/80 border border-red-500/30 text-red-200 text-sm px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-xl">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 border text-sm px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-xl ${
+          toast.startsWith('✓')
+            ? 'bg-emerald-900/80 border-emerald-500/30 text-emerald-200'
+            : 'bg-red-900/80 border-red-500/30 text-red-200'
+        }`}>
           {toast}
         </div>
       )}
@@ -91,13 +128,36 @@ export default function StationDetailPage() {
                   <p className="text-sm text-slate-500">{station.location} · <span className="font-mono text-slate-400">{station.id}</span></p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <StatusBadge status={station.status} />
                 {station.last_seen && (
                   <span className="text-xs text-slate-600">
                     Last seen {new Date(station.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 )}
+                {/* Stop Dispensing — only shown when station is stuck dispensing */}
+                {station.status === 'dispensing' && (
+                  <button
+                    onClick={handleCancelDispense}
+                    disabled={cancelPending}
+                    className="min-h-[36px] px-4 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 active:scale-95 focus:outline-none bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {cancelPending ? '...' : '⏹ Stop Dispensing'}
+                  </button>
+                )}
+                <button
+                  onClick={handleStatusToggle}
+                  disabled={statusPending}
+                  className={`min-h-[36px] px-4 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 active:scale-95 focus:outline-none ${
+                    statusPending
+                      ? 'bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed'
+                      : station.status === 'offline'
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                      : 'bg-slate-700/50 text-slate-400 border-slate-600 hover:bg-slate-700'
+                  }`}
+                >
+                  {statusPending ? '...' : station.status === 'offline' ? '▶ Set Online' : '⏹ Set Offline'}
+                </button>
               </div>
             </div>
           </div>
@@ -158,6 +218,12 @@ export default function StationDetailPage() {
             stationId={id}
             recommendation={recData?.recommendation}
           />
+        </div>
+
+        {/* Water Loss Detection */}
+        <div>
+          <SectionTitle>Water Loss Detection</SectionTitle>
+          <WaterLossPanel stationId={id} />
         </div>
 
         {/* Charts */}
